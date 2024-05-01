@@ -1,84 +1,89 @@
+#include <stdio.h>
 #include "sort.h"
+
 /**
- * swapp - swaps two eles
+ * partition - apply the Quick sort algorithm on the partition.
  *
- * @array: array of ints
- * @size: size of th arr
- * @i: first idx
- * @j: sec idx
- * Return: void
+ * @array: array of numbers
+ * @first: first element of the partition
+ * @last: last element of the partition
+ * @size: size of array
+ *
+ * Return: pivot index
  */
-void swapp(int *array, size_t size, int i, int j)
+int partition(int array[], int first, int last, size_t size)
 {
-	int temp;
+	int pivot, i, j;
 
-	temp = array[j];
-	if (array[i] != array[j])
-	{
-		array[j] = array[i];
-		array[i] = temp;
-		print_array(array, size);
-	}
-}
-/**
- * find_pivot_with_hoare - a function that is used to find the pivot
- * @array: arr of ints
- * @size: Size of array
- * @start: first index in the array or sub-array
- * @last: last index in the array or sub-array
- * Return: the pivot's index
- */
-int find_pivot_with_hoare(int *array, size_t size, size_t start, size_t last)
-{
-	int pivot = array[last], i = start - 1, j = last + 1;
+	pivot = array[last];
+	i = first - 1;
+	j = last + 1;
 
-	while (true)
+	while (!0)
 	{
-		do {
+		do
 			i++;
-		} while (array[i] < pivot);
-		do {
-			j--;
-		} while (array[j] > pivot);
-		if (i == j)
-			return (j - 1);
-		else if (i > j)
-			return (j);
-		swapp(array, size, j, i);
-	}
-}
-/**
- * make_partitions_with_pivot_hoare - a function that is
- * used to make partitions with the pivot [low, piv, high]
- * @array: arr of ints
- * @size: Size of array
- * @start: first index in the array or sub-array
- * @last: last index in the array or sub-array
- * Return: void
- */
-void make_partitions_with_pivot_hoare(int *array, size_t size,
-				size_t start, size_t last)
-{
-	size_t border;
+		while (array[i] < pivot);
 
-	if (start < last)
-	{
-		border = find_pivot_with_hoare(array, size, start, last);
-		make_partitions_with_pivot_hoare(array, size, start, border);
-		make_partitions_with_pivot_hoare(array, size, border + 1, last);
+		do
+			j--;
+		while (array[j] > pivot);
+
+		if (i > j)
+			return (j);
+
+		if (array[i] != array[j])
+		{
+			swap(&array[i], &array[j]);
+			print_array(array, size);
+		}
 	}
 }
+
 /**
- * quick_sort_hoare - function that sorts an array of integers in
+ * quick_sort_hoare1 - applies the Quick sort algorithm recursively.
+ *
+ * @array: array of numbers
+ * @first: first element of the partition
+ * @last: last element of the partition
+ * @size: size of array
+ */
+void quick_sort_hoare1(int *array, int first, int last, size_t size)
+{
+	int pivot_idx;
+
+	if (first < last)
+	{
+		pivot_idx = partition(array, first, last, size);
+		quick_sort_hoare1(array, first, pivot_idx, size);
+		quick_sort_hoare1(array, pivot_idx + 1, last, size);
+	}
+}
+
+/**
+ * quick_sort_hoare - sorts an array of integers in
  * ascending order using the Quick sort algorithm
  *
- * @array: The Array
- * @size: The size of array
+ * @array: array of numbers
+ * @size: size of array
  */
 void quick_sort_hoare(int *array, size_t size)
 {
-	if (!array || size < 2)
+	if (size <= 1)
 		return;
 
-	make_partitions_with_pivot_hoare(array, size, 0, size - 1);
+	quick_sort_hoare1(array, 0, size - 1, size);
+}
+
+/**
+ * swap - swap two numbers
+ *
+ * @num1: first number
+ * @num2: second number
+ */
+void swap(int *num1, int *num2)
+{
+	int temp = *num1;
+	*num1 = *num2;
+	*num2 = temp;
 }
